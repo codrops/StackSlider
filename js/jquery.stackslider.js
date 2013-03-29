@@ -204,17 +204,24 @@
 
 			// support css transitions and 3d transforms
 			this.support = Modernizr.csstransitions && Modernizr.csstransforms3d;
-			var transProperties = {
-				'WebkitTransition' : { transitionEndEvent : 'webkitTransitionEnd', tranformName : '-webkit-transform' },
-				'MozTransition' : { transitionEndEvent : 'transitionend', tranformName : '-moz-transform' },
-				'OTransition' : { transitionEndEvent : 'oTransitionEnd', tranformName : '-o-transform' },
-				'msTransition' : { transitionEndEvent : 'MSTransitionEnd', tranformName : '-ms-transform' },
-				'transition' : { transitionEndEvent : 'transitionend', tranformName : 'transform' }
-			};
-			
+			var transEndEventNames = {
+					'WebkitTransition' : 'webkitTransitionEnd',
+					'MozTransition' : 'transitionend',
+					'OTransition' : 'oTransitionEnd',
+					'msTransition' : 'MSTransitionEnd',
+					'transition' : 'transitionend'
+				},
+				transformNames = {
+					'WebkitTransform' : '-webkit-transform',
+					'MozTransform' : '-moz-transform',
+					'OTransform' : '-o-transform',
+					'msTransform' : '-ms-transform',
+					'transform' : 'transform'
+				};
+
 			if( this.support ) {
-				this.transEndEventName = transProperties[ Modernizr.prefixed( 'transition' ) ].transitionEndEvent + '.stackslider';
-				this.transformName = transProperties[ Modernizr.prefixed( 'transition' ) ].tranformName;
+				this.transEndEventName = transEndEventNames[ Modernizr.prefixed( 'transition' ) ] + '.stackslider';
+				this.transformName = transformNames[ Modernizr.prefixed( 'transform' ) ];
 			}
 
 			this.current = 0;
