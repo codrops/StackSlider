@@ -192,7 +192,12 @@
 		// default transition easing
 		easing : 'ease-in-out',
 		// render both piles
-		piles : true
+		piles : true,
+		// callbacks
+		onBeforeNavigate : $.noop,
+		onAfterNavigate : $.noop,
+		onBeforeFlow : $.noop,
+		onAfterFlow : $.noop,
 	};
 
 	$.StackSlider.prototype = {
@@ -356,11 +361,15 @@
 		},
 		_flow : function( dir ) {
 
+			this.options.onBeforeFlow(this.current);
+
 			var self = this;
 			this._navigate( dir, true );
 			this.flowtimeout = setTimeout( function() { 
 				self._flow( dir );
 			}, 150 );
+
+			this.options.onAfterFlow(this.current);
 
 		},
 		_navigate : function( dir, flow ) {
@@ -368,6 +377,10 @@
 			var self = this,
 				classes = 'st-left st-center st-right st-leftflow st-rightflow', dirclass, posclass, pileOut, pileIn,
 				$currentItem = this.$items.eq( this.current );
+
+			if(!flow) {
+				self.options.onBeforeNavigate(self.current);
+			}
 
 			if( dir === 'next' && this.current < this.itemsCount - 1 ) {
 
@@ -425,6 +438,10 @@
 			this.titletimeout = setTimeout( function() {
 				self.$title.html( $nextItem.data( 'title' ) );
 			}, time );
+
+			if(!flow) {
+				this.options.onAfterNavigate(self.current);
+			}
 
 		},
 		_updatePile : function( pile, action ) {
