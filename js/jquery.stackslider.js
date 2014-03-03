@@ -187,6 +187,8 @@
 
 	// the options
 	$.StackSlider.defaults = {
+		// default starting slide
+		start: 0,
 		// default transition speed
 		speed : 600,
 		// default transition easing
@@ -234,7 +236,10 @@
 					return false;
 				}
 				self._initEvents();
-
+				
+				if(self.options.start > 0) {
+					self.jump(self.jump(self.options.start));
+				}
 			} );
 
 		},
@@ -474,6 +479,22 @@
 
 			} );
 
+		},
+		jump : function( pos ) {
+			
+      var self = this,
+      pos = parseInt(pos);
+      if(pos > self.current) {
+        for(var i = self.current; i < pos; i++) {
+          var flow = self.current < pos-1 ? true : false;
+          self._navigate( "next" , flow);
+        }
+      } else {
+        for(var i = self.current; i > pos; i--) {
+          var flow = self.current > (pos+1) ? true : false;
+          self._navigate( "prev" , flow);
+        }
+      }
 		}
 
 	};
