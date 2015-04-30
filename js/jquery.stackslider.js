@@ -294,6 +294,7 @@
 
 			this._setSize();
 			this._initItems();
+			this._updatePileSplit();
 
 		},
 		_setSize : function() {
@@ -379,50 +380,40 @@
 			this.options.onAfterFlow(this.current);
 
 		},
+		_itemIndexLeftOf : function( index ) {
+			return index === 0 ? this.itemsCount - 1 : index - 1;
+		},
+		_itemIndexRightOf : function( index ) {
+			return index === this.itemsCount - 1 ? 0 : index + 1;
+		},
 		_navigate : function( dir, flow ) {
 
-			var self = this,
-				classes = 'st-left st-center st-right st-leftflow st-rightflow', dirclass, posclass, pileOut, pileIn,
-				$currentItem = this.$items.eq( this.current );
+			var self         = this,
+			    classes      = 'st-left st-center st-right st-leftflow st-rightflow', dirclass, posclass, pileOut, pileIn,
+			    $currentItem = this.$items.eq( this.current );
 
 			if(!flow) {
 				self.options.onBeforeNavigate(self.current);
 			}
 
-			if( dir === 'next' && this.current < this.itemsCount - 1 ) {
+			if( dir === 'next' && (this.options.loop || this.current < this.itemsCount - 1) ) {
 
-				++this.current;
-				posclass = 'st-left';
-				dirclass = flow ? 'st-leftflow' : posclass;
-				pileOut = 'right';
-				pileIn = 'left';
-
-			}
-			else if( dir === 'prev' && this.current > 0 ) {
-
-				--this.current;
-				posclass = 'st-right';
-				dirclass = flow ? 'st-rightflow' : posclass;
-				pileOut = 'left';
-				pileIn = 'right';
+				this.current = this._itemIndexRightOf(this.current);
+				posclass     = 'st-left';
+				dirclass     = flow ? 'st-leftflow' : posclass;
+				pileOut      = 'right';
+				pileIn       = 'left';
+				this._updatePileSplit();
 
 			}
-			else if( this.options.loop && dir ==='prev' && this.current === 0 ) {
+			else if( dir === 'prev' && (this.options.loop || this.current > 0) ) {
 
-				this.current = this.itemsCount - 1;
-				posclass = 'st-right';
-				dirclass = flow ? 'st-leftflow' : posclass;
-				pileOut = 'right';
-				pileIn = 'left';
-
-			}
-			else if( this.options.loop && dir === 'next' && this.current === this.itemsCount - 1 ) {
-
-				this.current = 0;
-				posclass = 'st-left';
-				dirclass = flow ? 'st-leftflow' : posclass;
-				pileOut = 'right';
-				pileIn = 'left';
+				this.current = this._itemIndexLeftOf(this.current);
+				posclass     = 'st-right';
+				dirclass     = flow ? 'st-rightflow' : posclass;
+				pileOut      = 'left';
+				pileIn       = 'right';
+				this._updatePileSplit();
 
 			}
 			else {
@@ -482,6 +473,25 @@
 				this.$lPile.css( 'height', action === 'in' ? '+=5' : '-=5' );
 			}
 
+		},
+		_updatePileSplit : function () {
+			var indexMax      = this.itemsCount - 1,
+			    leftIndex     = null,
+			    pileSize      = (this.itemsCount - 1) / 2, // one is always in center, so skip that
+			    pileLeftSize  = pileSize % 1 === 0 ? pileSize : Math.ceil(pileSize),
+			    pileRightSize = pileSize % 1 === 0 ? pileSize : Math.floor(pileSize),
+			    rightIndex    = null,
+			    x;
+
+			for (x = 1; x <= pileRightSize; x += 1) {
+			    rightIndex = this._itemIndexRightOf( rightIndex === null ? this.current : rightIndex );
+			    this.$items.eq(rightIndex).removeClass('st-left st-center').addClass('st-right');
+			}
+
+			for (x = 1; x <= pileLeftSize; x += 1) {
+			    leftIndex = this._itemIndexLeftOf( leftIndex === null ? this.current : leftIndex );
+			    this.$items.eq(leftIndex).removeClass('st-right st-center').addClass('st-left');
+			}
 		},
 		_initItems : function() {
 
