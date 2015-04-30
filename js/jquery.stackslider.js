@@ -187,8 +187,8 @@
 
 	// the options
 	$.StackSlider.defaults = {
-    // is looping enabled
-    loop : false,
+		// is looping enabled
+		loop : false,
 		// default starting slide
 		start: 0,
 		// default transition speed
@@ -407,24 +407,24 @@
 				pileIn = 'right';
 
 			}
-      else if( this.options.loop && dir ==='prev' && this.current === 0 ) {
+			else if( this.options.loop && dir ==='prev' && this.current === 0 ) {
 
-        this.current = this.itemsCount - 1;
-        posclass = 'st-right';
-        dirclass = flow ? 'st-leftflow' : posclass;
-				pileOut = 'right';
-				pileIn = 'left';
-
-      }
-      else if( this.options.loop && dir === 'next' && this.current === this.itemsCount - 1 ) {
-
-        this.current = 0;
-        posclass = 'st-left';
+				this.current = this.itemsCount - 1;
+				posclass = 'st-right';
 				dirclass = flow ? 'st-leftflow' : posclass;
 				pileOut = 'right';
 				pileIn = 'left';
 
-      }
+			}
+			else if( this.options.loop && dir === 'next' && this.current === this.itemsCount - 1 ) {
+
+				this.current = 0;
+				posclass = 'st-left';
+				dirclass = flow ? 'st-leftflow' : posclass;
+				pileOut = 'right';
+				pileIn = 'left';
+
+			}
 			else {
 				return false;
 			}
